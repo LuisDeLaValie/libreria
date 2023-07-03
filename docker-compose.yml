@@ -3,26 +3,27 @@ version: '3.8'
 services:
   mongo:
     image: mongo:latest
-    container_name: mongodb
     ports:
       - "27017:27017"
     volumes:
-      - mongo_data:/data/db
+      - volumen_mongodb:/data/db
+    
 
   app:
     build:
       context: .
       dockerfile: Dockerfile.dev
     container_name: my_go_app    
+    volumes:
+      - ./lib:/app
     ports:
       - "8080:8080"
-    
-
     depends_on:
       - mongo
 
 volumes:
-  mongo_data:
+  volumen_mongodb:
+    external: true
 
 # Extender la configuración con otros archivos
 x-include:

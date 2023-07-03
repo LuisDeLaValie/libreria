@@ -16,11 +16,11 @@ func Conectar() {
 	// Generar cadena de conexion mediante Environment
 	uri := fmt.Sprintf(
 		// "mongodb://%s:%s@%s:%s",
-		"mongodb://%s:%s@%s:%s/?authSource=%s",
+		"mongodb://%s:%s@%s:%s/%s?authSource=admin",
 		utils.Getenv("DB_USER", "Biblioteca_User"),
 		utils.Getenv("DB_PWD", "123456"),
 		utils.Getenv("DB_HOST", "localhost"),
-		utils.Getenv("DB_POST", "12500"),
+		utils.Getenv("DB_PORT", "12500"),
 		utils.Getenv("DB_DATABASE", "Libreria"),
 	)
 

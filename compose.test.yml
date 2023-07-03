@@ -1,4 +1,4 @@
-# docker-compose -f docker-compose.yml -f compose.test.yml up
+# docker-compose -f docker-compose.yml -f compose.test.yml up libreri_do_test
 
 
 version: '3.8'
@@ -10,14 +10,15 @@ services:
       dockerfile: Dockerfile.test
     container_name: libreria_go_test 
     environment:
-      - DB_DATABASE=Libreria_test
       - DB_USER=rootLibreriaTest
       - DB_PWD=Comemierda
-      - DB_HOST=localhost
+      - DB_HOST=mongo
       - DB_PORT=27017
+      - DB_DATABASE=Libreria_test
 
   mongo:
     container_name: libreria_go_test_mongo
     environment:
+      MONGO_INITDB_DATABASE: Libreria_test
       MONGO_INITDB_ROOT_USERNAME: rootLibreriaTest
       MONGO_INITDB_ROOT_PASSWORD: Comemierda
