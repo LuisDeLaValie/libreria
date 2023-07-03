@@ -1,0 +1,16 @@
+# Dockerfile para desarrollo
+
+# Utiliza una imagen base de Go para desarrollo
+FROM golang:1.17-alpine
+
+# Establece el directorio de trabajo en el contenedor
+WORKDIR /app
+
+# Copia los archivos de la aplicación al contenedor
+COPY ./lib .
+
+# Instala las herramientas de desarrollo adicionales, si es necesario
+RUN apk add --no-cache git
+
+# Compila y ejecuta la aplicación en modo de desarrollo
+CMD ["go", "run", "./main.go"]

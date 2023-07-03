@@ -1,0 +1,22 @@
+# docker-compose -f docker-compose.yml -f compose.dev.yml up
+
+version: '3.8'
+
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+    container_name: libreria_go_dev 
+    environment:
+      - DB_DATABASE=Libreria_dev
+      - DB_USER=rootLibreria
+      - DB_PWD=Comemierda
+      - DB_HOST=localhost
+      - DB_PORT=27017
+
+  mongo:
+    container_name: libreria_go_dev_mongo
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: rootLibreria
+      MONGO_INITDB_ROOT_PASSWORD: Comemierda
