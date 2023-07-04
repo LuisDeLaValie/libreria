@@ -10,15 +10,24 @@ services:
       dockerfile: Dockerfile.test
     container_name: libreria_go_test 
     environment:
-      - DB_USER=rootLibreriaTest
-      - DB_PWD=Comemierda
-      - DB_HOST=mongo
-      - DB_PORT=27017
+      - DB_USER=rootLibreria
+      - DB_PWD=comemierda
+      - DB_HOST=mongodb
+      - DB_PORT=27017      
       - DB_DATABASE=Libreria_test
+    networks:
+      - network-mongodb
 
-  mongo:
-    container_name: libreria_go_test_mongo
-    environment:
-      MONGO_INITDB_DATABASE: Libreria_test
-      MONGO_INITDB_ROOT_USERNAME: rootLibreriaTest
-      MONGO_INITDB_ROOT_PASSWORD: Comemierda
+networks:
+  network-mongodb:
+    external: true
+
+
+
+
+  # mongo:
+  #   container_name: libreria_go_test_mongo
+  #   environment:
+  #     MONGO_INITDB_ROOT_USERNAME: rootLibreriaTest
+  #     MONGO_INITDB_ROOT_PASSWORD: Comemierda
+  #     MONGO_INITDB_DATABASE: Libreria_test

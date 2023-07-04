@@ -1,14 +1,6 @@
 version: '3.8'
 
 services:
-  mongo:
-    image: mongo:latest
-    ports:
-      - "27017:27017"
-    volumes:
-      - volumen_mongodb:/data/db
-    
-
   app:
     build:
       context: .
@@ -18,8 +10,7 @@ services:
       - ./lib:/app
     ports:
       - "8080:8080"
-    depends_on:
-      - mongo
+
 
 volumes:
   volumen_mongodb:

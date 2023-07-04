@@ -15,10 +15,16 @@ services:
       - DB_HOST=mongo
       - DB_PORT=27017
       - DB_DATABASE=Libreria_dev
+    networks:
+      - network-mongodb
 
-  mongo:
-    container_name: libreria_go_dev_mongo
-    environment:
-      MONGO_INITDB_DATABASE: Libreria_dev
-      MONGO_INITDB_ROOT_USERNAME: rootLibreriaDev
-      MONGO_INITDB_ROOT_PASSWORD: Comemierda
+networks:
+  network-mongodb:
+    external: true
+
+  # mongo:
+  #   container_name: libreria_go_dev_mongo
+  #   environment:
+  #     MONGO_INITDB_DATABASE: Libreria_dev
+  #     MONGO_INITDB_ROOT_USERNAME: rootLibreriaDev
+  #     MONGO_INITDB_ROOT_PASSWORD: Comemierda

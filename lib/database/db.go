@@ -16,12 +16,12 @@ func Conectar() {
 	// Generar cadena de conexion mediante Environment
 	uri := fmt.Sprintf(
 		// "mongodb://%s:%s@%s:%s",
-		"mongodb://%s:%s@%s:%s/%s?authSource=admin",
+		"mongodb://%s:%s@%s:%s/",
+		// "mongodb://rootLibreriaTest:Comemierda@mongo:27017/Libreria_test?authSource=admin",
 		utils.Getenv("DB_USER", "Biblioteca_User"),
 		utils.Getenv("DB_PWD", "123456"),
 		utils.Getenv("DB_HOST", "localhost"),
 		utils.Getenv("DB_PORT", "12500"),
-		utils.Getenv("DB_DATABASE", "Libreria"),
 	)
 
 	// Configura las opciones de conexión
@@ -47,4 +47,12 @@ func Desconectar() {
 	if err != nil {
 		panic("Error al desconectar de MongoDB: " + err.Error())
 	}
+}
+
+func Collection(coll string) *mongo.Collection {
+
+	database := utils.Getenv("DB_DATABASE", "Libreria")
+
+	return client.Database(database).Collection(coll)
+
 }
