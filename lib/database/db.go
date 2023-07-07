@@ -35,18 +35,25 @@ func Conectar() {
 	}
 
 	// Comprueba la conexión
-	err = client.Ping(context.Background(), nil)
+	_, err = conrpobarConexion()
 	if err != nil {
 		panic("Error al hacer ping a MongoDB: " + err.Error())
 	}
+
 }
 
 func Desconectar() {
-	// Desconecta del servidor MongoDB
-	err := client.Disconnect(context.Background())
-	if err != nil {
-		panic("Error al desconectar de MongoDB: " + err.Error())
+
+	// Comprueba la conexión
+	con, _ := conrpobarConexion()
+	if !con {
+		// Desconecta del servidor MongoDB
+		err := client.Disconnect(context.Background())
+		if err != nil {
+			panic("Error al desconectar de MongoDB: " + err.Error())
+		}
 	}
+
 }
 
 func Collection(coll string) *mongo.Collection {
@@ -55,4 +62,13 @@ func Collection(coll string) *mongo.Collection {
 
 	return client.Database(database).Collection(coll)
 
+}
+
+func conrpobarConexion() (bool, error) {
+	// Comprueba la conexión
+	err := client.Ping(context.Background(), nil)
+	if err != nil {
+		return false, err
+	}
+	return true, nil
 }
