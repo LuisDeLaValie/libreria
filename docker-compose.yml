@@ -12,10 +12,6 @@ services:
       - "8080:8080"
 
 
-volumes:
-  volumen_mongodb:
-    external: true
-
 # Extender la configuración con otros archivos
 x-include:
   - compose.dev.yml

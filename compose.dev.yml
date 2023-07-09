@@ -5,16 +5,17 @@ version: '3.8'
 
 services:
   app:
+    image: libreria_dev
     build:
       context: .
       dockerfile: Dockerfile.dev
     container_name: libreria_go_dev 
     environment:
-      - DB_USER=rootLibreriaDev
-      - DB_PWD=Comemierda
-      - DB_HOST=mongo
-      - DB_PORT=27017
-      - DB_DATABASE=Libreria_dev
+      - DB_USER=rootLibreria
+      - DB_PWD=comemierda
+      - DB_HOST=mongodb
+      - DB_PORT=27017      
+      - DB_DATABASE=Libreria
     networks:
       - network-mongodb
 

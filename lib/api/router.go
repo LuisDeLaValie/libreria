@@ -6,6 +6,8 @@ import (
 	"os"
 	"time"
 
+	libroshandlers "github.com/TDTxLE/libreria/api/handlers"
+
 	"github.com/gin-gonic/gin"
 )
 
@@ -52,12 +54,12 @@ func generarLogs() {
 }
 
 func iniciarHandlers() {
-	v1 := r.Group("/prueba/v1")
+	libros := r.Group("/api/libros")
 	{
-		v1.GET("/ping", Prubea)
-	}
-	v2 := r.Group("/prueba/v2")
-	{
-		v2.GET("/ping", Prubea)
+		libros.GET("/", libroshandlers.ListarHandler)
+		libros.GET("/:id", libroshandlers.ObetenerHandler)
+		libros.POST("/", libroshandlers.CrearHandler)
+		libros.PUT("/:id", libroshandlers.ActualizarHandler)
+		libros.DELETE("/:id", libroshandlers.EliminarHandler)
 	}
 }

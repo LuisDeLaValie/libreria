@@ -1,7 +1,7 @@
 # Dockerfile para pruebas
 
 # Utiliza una imagen base de Go para pruebas
-FROM golang:1.17-alpine
+FROM golang:1.20-alpine
 
 
 
