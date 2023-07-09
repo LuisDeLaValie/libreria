@@ -2,6 +2,8 @@ package utils
 
 import (
 	"fmt"
+	"reflect"
+	"strings"
 	"time"
 
 	"go.mongodb.org/mongo-driver/bson"
@@ -34,4 +36,30 @@ func BsonToGoValue(data bson.M, key string) *interface{} {
 		return nil
 	}
 	return &value
+}
+
+func GoStructToBson(gostruct interface{}) bson.M {
+	auxdata := bson.M{}
+
+	// Obtener el tipo del struct
+	keys := reflect.TypeOf(gostruct)
+	values := reflect.ValueOf(gostruct)
+
+	// Iterar sobre los campos del struct
+	for i := 0; i < keys.NumField(); i++ {
+		campo := keys.Field(i)
+		nombre := campo.Name
+
+		valor := values.FieldByName(nombre)
+		if !valor.IsNil() {
+
+			if valor.Kind() == reflect.Struct {
+				auxdata[strings.ToLower(nombre)+"asd"] = GoStructToBson(valor.Elem().Interface())
+			} else {
+				auxdata[strings.ToLower(nombre)] = valor.Elem().Interface()
+			}
+		}
+
+	}
+	return auxdata
 }

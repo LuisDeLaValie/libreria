@@ -6,7 +6,7 @@ import (
 	"time"
 
 	"github.com/TDTxLE/libreria/database"
-	"github.com/TDTxLE/libreria/utils"
+	utils "github.com/TDTxLE/libreria/utils/mongoTogolang"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
@@ -25,6 +25,13 @@ func libromodelTobson(libro LibroModel) bson.M {
 	}
 	if libro.Actualizado != nil {
 		data["actualizado"] = libro.Actualizado
+	}
+	if libro.Origen != nil {
+		data["origen"] = bson.M{
+			"host": libro.Origen.Host,
+			"url":  libro.Origen.Url,
+		}
+
 	}
 	return data
 }
@@ -57,18 +64,20 @@ func bsonTolibromodel(data bson.M) LibroModel {
 }
 
 type LibroModel struct {
-	Id          *string
-	Titulo      *string
-	Sinopsis    *string
-	Origen      *origen
-	Creado      *time.Time
-	Actualizado *time.Time
+	Id          *string    `json:"id,omitempty"`
+	Titulo      *string    `json:"titulo,omitempty"`
+	Sinopsis    *string    `json:"sinopsis,omitempty"`
+	Origen      *Origen    `json:"origen,omitempty"`
+	Creado      *time.Time `json:"creado,omitempty"`
+	Actualizado *time.Time `json:"actualizado,omitempty"`
 }
 
-type origen struct {
-	Hosth string
-	Url   string
+type Origen struct {
+	Host string `json:"host"`
+	Url  string `json:"url"`
 }
+
+const dbCollection = "libros"
 
 func (lirbo LibroModel) CrearLibro(nuevoLibro LibroModel) (*LibroModel, error) {
 
@@ -79,7 +88,7 @@ func (lirbo LibroModel) CrearLibro(nuevoLibro LibroModel) (*LibroModel, error) {
 	database.Conectar()
 	document := libromodelTobson(nuevoLibro)
 	// Insertar el documento en la colección
-	oid, err := database.Collection("libros").InsertOne(context.TODO(), document)
+	oid, err := database.Collection(dbCollection).InsertOne(context.TODO(), document)
 	if err != nil {
 		// Manejar el error de inserción
 		database.Desconectar()
@@ -102,7 +111,7 @@ func (lirbo LibroModel) ListarLibros() ([]LibroModel, error) {
 	var libros []LibroModel
 	database.Conectar()
 	// Realiza una consulta para obtener múltiples documentos
-	cursor, err := database.Collection("libros").Find(context.Background(), bson.M{})
+	cursor, err := database.Collection(dbCollection).Find(context.Background(), bson.M{})
 	if err != nil {
 		database.Desconectar()
 		return nil, fmt.Errorf("Error al leer el documentos: %v", err)
@@ -149,7 +158,7 @@ func (lirbo LibroModel) ObtenerLibro(oid string) (*LibroModel, error) {
 
 	// Obtener el documento correspondiente a la consulta
 	var result bson.M
-	err = database.Collection("libros").FindOne(context.TODO(), filter).Decode(&result)
+	err = database.Collection(dbCollection).FindOne(context.TODO(), filter).Decode(&result)
 	if err != nil {
 		if err == mongo.ErrNoDocuments {
 			return nil, fmt.Errorf("No se encontró el documento: %v", err)
@@ -187,7 +196,7 @@ func (lirbo LibroModel) ActualizarLibro(oid string, actualizar LibroModel) error
 	update := bson.M{"$set": newdata}
 
 	// Realizar la actualización del documento
-	_, err = database.Collection("libros").UpdateOne(context.TODO(), filter, update)
+	_, err = database.Collection(dbCollection).UpdateOne(context.TODO(), filter, update)
 	if err != nil {
 		return err
 	}
@@ -213,7 +222,7 @@ func (lirbo LibroModel) EliminarLibro(oid string) error {
 	filter := bson.M{"_id": id}
 
 	// Realizar la actualización del documento
-	_, err = database.Collection("libros").DeleteOne(context.TODO(), filter)
+	_, err = database.Collection(dbCollection).DeleteOne(context.TODO(), filter)
 	if err != nil {
 		return nil
 	}
