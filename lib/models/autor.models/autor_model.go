@@ -1,4 +1,4 @@
-package autor
+package autormodels
 
 import (
 	"context"

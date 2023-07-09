@@ -1,17 +1,17 @@
-package autor_test
+package autormodels_test
 
 import (
 	"testing"
 	"time"
 
-	models "github.com/TDTxLE/libreria/models/autor"
+	autormodels "github.com/TDTxLE/libreria/models/autor.models"
 )
 
 var oid string
 
 func TestCrearAutor(t *testing.T) {
 
-	autor := models.AutorModel{
+	autor := autormodels.AutorModel{
 		Nombre: "Autor de prueba",
 		Creado: time.Now(),
 	}
@@ -25,7 +25,7 @@ func TestCrearAutor(t *testing.T) {
 }
 
 func TestListarAutores(t *testing.T) {
-	var lirbo models.AutorModel
+	var lirbo autormodels.AutorModel
 
 	_, err := lirbo.ListarAutores()
 	if err != nil {
@@ -35,7 +35,7 @@ func TestListarAutores(t *testing.T) {
 }
 
 func TestObtenerAutor(t *testing.T) {
-	var libro models.AutorModel
+	var libro autormodels.AutorModel
 	t.Run("libro existente", func(t *testing.T) {
 		_, err := libro.ObtenerAutor("64aa30d37d3356b2bca23c65")
 		if err != nil {
@@ -79,7 +79,7 @@ func TestObtenerAutor(t *testing.T) {
 }
 
 func TestActualizarAutor(t *testing.T) {
-	autor := models.AutorModel{
+	autor := autormodels.AutorModel{
 		Nombre:      "Actualizar Autor",
 		Actualizado: time.Now(),
 	}
@@ -92,7 +92,7 @@ func TestActualizarAutor(t *testing.T) {
 }
 
 func TestEliminarAutor(t *testing.T) {
-	var autor models.AutorModel
+	var autor autormodels.AutorModel
 	err := autor.EliminarAutor(oid)
 	if err != nil {
 		t.Errorf("Error al eliminar libro: %v", err)

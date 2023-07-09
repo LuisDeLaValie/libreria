@@ -1,33 +1,35 @@
-package models_test
+package librosmodels_test
 
 import (
 	"testing"
 	"time"
 
-	models "github.com/TDTxLE/libreria/models/libros"
+	librosmodels "github.com/TDTxLE/libreria/models/libros.models"
+	utils "github.com/TDTxLE/libreria/utils/mongoTogolang"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
 var oid string
 
 func TestCrearLibro(t *testing.T) {
+
 	titulo := "Lirbo de prueba"
 	sipnosis := "Este es un libro de prueba para ver el funcionaminto dela api"
 	creado := time.Now()
-	libro := models.LibroModel{Titulo: &titulo, Sinopsis: &sipnosis, Creado: &creado}
+	libro := librosmodels.LibroModelForm{Titulo: &titulo, Sinopsis: &sipnosis, Creado: creado}
 
-	nuevoLibro, err := libro.CrearLibro(libro)
+	nuevoLibro, err := librosmodels.CrearLibro(libro)
 	if err != nil {
 		t.Errorf("No se pudo crear el libro: %v", err)
 		t.Fail()
 	}
-	oid = *nuevoLibro.Id
-	t.Logf("Libro creado con exito : %v", nuevoLibro)
+	oid = nuevoLibro.Hex()
+	t.Logf("Libro creado con exito : %s", nuevoLibro)
 }
 
 func TestListarLibros(t *testing.T) {
-	var lirbo models.LibroModel
 
-	_, err := lirbo.ListarLibros()
+	_, err := librosmodels.ListarLibros()
 
 	if err != nil {
 		t.Errorf("Error al obtener los libros: %v", err)
@@ -36,9 +38,8 @@ func TestListarLibros(t *testing.T) {
 }
 
 func TestObtenerLibro(t *testing.T) {
-	var libro models.LibroModel
 	t.Run("libro existente", func(t *testing.T) {
-		libroobtenido, err := libro.ObtenerLibro("64a3b9bb60740a5a6707e64b")
+		libroobtenido, err := librosmodels.ObtenerLibro("64a3b9bb60740a5a6707e64b")
 		if err != nil {
 			t.Fatalf("Error al obtenr el libro: %v", err)
 			t.Fail()
@@ -55,7 +56,7 @@ func TestObtenerLibro(t *testing.T) {
 			}
 		}()
 
-		_, err := libro.ObtenerLibro("64a3b9bb60740a5a6707e647")
+		_, err := librosmodels.ObtenerLibro("64a3b9bb60740a5a6707e647")
 		if err != nil {
 			t.Logf("Error al obtenr el libro: %v", err)
 		}
@@ -69,7 +70,7 @@ func TestObtenerLibro(t *testing.T) {
 			}
 		}()
 
-		_, err := libro.ObtenerLibro("64a3b9bb60740a5a6707")
+		_, err := librosmodels.ObtenerLibro("64a3b9bb60740a5a6707")
 		if err != nil {
 			t.Logf("Error al obtenr el libro: %v", err)
 		}
@@ -79,11 +80,17 @@ func TestObtenerLibro(t *testing.T) {
 }
 
 func TestActualizarLibro(t *testing.T) {
-	var libro models.LibroModel
+	oid, _ := utils.ValidarOID("64aa30d37d3356b2bca23c65")
+	autores := []primitive.ObjectID{*oid}
 	clock := time.Now()
 	auxTitulo := "actualizar titulo " + clock.Local().GoString()
+
+	var libro librosmodels.LibroModelForm
 	libro.Titulo = &auxTitulo
-	err := libro.ActualizarLibro("64a5cf610d0195d943d2ee10", libro)
+	libro.Actualizado = clock
+	libro.Autores = &autores
+
+	err := librosmodels.ActualizarLibro("64a5cf610d0195d943d2ee10", libro)
 	if err != nil {
 		t.Errorf("Error al actualizar libro: %v", err)
 		t.Fail()
@@ -92,8 +99,7 @@ func TestActualizarLibro(t *testing.T) {
 }
 
 func TestEliminarLibro(t *testing.T) {
-	var libro models.LibroModel
-	err := libro.EliminarLibro(oid)
+	err := librosmodels.EliminarLibro(oid)
 	if err != nil {
 		t.Errorf("Error al eliminar libro: %v", err)
 		t.Fail()
