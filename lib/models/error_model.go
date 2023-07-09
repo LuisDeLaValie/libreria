@@ -1,18 +1,17 @@
 package models
 
-import "encoding/json"
+import (
+	"fmt"
+)
 
 type ResposeError struct {
-	Status     string      `json:"status,omitempty"`
-	StatusCode *int        `json:"-,omitempty"`
-	Message    string      `json:"mensaje"`
-	Detalle    interface{} `json:"detalle,omitempty"`
+	Status     string `json:"status,omitempty"`
+	StatusCode *int   `json:"-,omitempty"`
+	Message    string `json:"mensaje"`
+	Detalle    error  `json:"detalle,omitempty"`
 }
 
 func (e ResposeError) Error() string {
-	jsonData, err := json.Marshal(e)
-	if err != nil {
-		return e.Message
-	}
-	return string(jsonData)
+	return fmt.Sprintf(`{"status":"%s", "mensaje":"%s", "detalle":{%s}}"`, e.Status, e.Message, e.Detalle.Error())
+
 }

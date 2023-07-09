@@ -54,7 +54,7 @@ func GoStructToBson(gostruct interface{}) bson.M {
 		if !valor.IsNil() {
 
 			if valor.Kind() == reflect.Struct {
-				auxdata[strings.ToLower(nombre)+"asd"] = GoStructToBson(valor.Elem().Interface())
+				auxdata[strings.ToLower(nombre)] = GoStructToBson(valor.Elem().Interface())
 			} else {
 				auxdata[strings.ToLower(nombre)] = valor.Elem().Interface()
 			}
