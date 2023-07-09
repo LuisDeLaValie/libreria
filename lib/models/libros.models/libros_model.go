@@ -127,7 +127,45 @@ func ListarLibros() ([]LibroModel, error) {
 	var libros []LibroModel
 	database.Conectar()
 	// Realiza una consulta para obtener múltiples documentos
-	cursor, err := database.Collection(dbCollection).Find(context.Background(), bson.M{})
+	consulta := bson.A{
+		bson.M{
+			"$lookup": bson.M{
+				"from":         "autores",
+				"localField":   "autores",
+				"foreignField": "_id",
+				"as":           "autores",
+			},
+		},
+		bson.M{
+			"$project": bson.M{
+				"_id":         1,
+				"titulo":      1,
+				"sinopsis":    1,
+				"creado":      1,
+				"actualizado": 1,
+				"autores": bson.M{
+					"$cond": bson.M{
+						"if": bson.M{
+							"$eq": bson.A{"$autores", bson.A{}},
+						},
+						"then": "$$REMOVE",
+						"else": bson.M{
+							"$map": bson.M{
+								"input": "$autores",
+								"as":    "autor",
+								"in": bson.M{
+									"_id":    "$$autor._id",
+									"nombre": "$$autor.nombre",
+								},
+							},
+						},
+					},
+				},
+			},
+		},
+	}
+	colecion := database.Collection(dbCollection)
+	cursor, err := colecion.Aggregate(context.Background(), consulta)
 	if err != nil {
 		database.Desconectar()
 		statuscode := utils.GetHTTPStatusCode(err)
@@ -140,7 +178,6 @@ func ListarLibros() ([]LibroModel, error) {
 	}
 
 	defer cursor.Close(context.Background())
-
 	for cursor.Next(context.Background()) {
 
 		// Declara una variable para almacenar el resultado de la consulta
@@ -185,26 +222,82 @@ func ObtenerLibro(oid string) (*LibroModel, error) {
 		}
 	}
 
-	// Crear una consulta (query) para obtener un documento por ID
-	filter := bson.M{"_id": id}
+	// Realiza una consulta para obtener múltiples documentos
+	consulta := bson.A{
+		bson.M{
+			"$match": bson.M{
+				"_id": id,
+			},
+		},
+		bson.M{
+			"$lookup": bson.M{
+				"from":         "autores",
+				"localField":   "autores",
+				"foreignField": "_id",
+				"as":           "autores",
+			},
+		},
+		bson.M{
+			"$project": bson.M{
+				"_id":         1,
+				"titulo":      1,
+				"sinopsis":    1,
+				"creado":      1,
+				"actualizado": 1,
+				"autores": bson.M{
+					"$cond": bson.M{
+						"if": bson.M{
+							"$eq": bson.A{"$autores", bson.A{}},
+						},
+						"then": "$$REMOVE",
+						"else": bson.M{
+							"$map": bson.M{
+								"input": "$autores",
+								"as":    "autor",
+								"in": bson.M{
+									"_id":    "$$autor._id",
+									"nombre": "$$autor.nombre",
+								},
+							},
+						},
+					},
+				},
+			},
+		},
+	}
 
 	// Obtener el documento correspondiente a la consulta
-	var result LibroModel
-	err = database.Collection(dbCollection).FindOne(context.TODO(), filter).Decode(&result)
+	colecion := database.Collection(dbCollection)
+	cursor, err := colecion.Aggregate(context.Background(), consulta)
 	if err != nil {
-		/* if err == mongo.ErrNoDocuments {
-			return nil, fmt.Errorf("No se encontró el documento: %v", err)
-		} else {
-			panic(err)
-		} */
-
+		database.Desconectar()
 		statuscode := utils.GetHTTPStatusCode(err)
 		return nil, models.ResposeError{
-			Status:     "Error al leer el documento",
+			Status:     "no se pudo obtener libros",
 			StatusCode: &statuscode,
-			Message:    "no se obtubo el documento",
+			Message:    "Error al leer el documentos",
 			Detalle:    err,
 		}
+	}
+
+	var result LibroModel
+	defer cursor.Close(context.Background())
+	for cursor.Next(context.Background()) {
+		// Declara una variable para almacenar el resultado de la consulta
+		var result LibroModel
+		// Decodifica el documento en la variable result
+		err := cursor.Decode(&result)
+		if err != nil {
+			database.Desconectar()
+			statuscode := utils.GetHTTPStatusCode(err)
+			return nil, models.ResposeError{
+				Status:     "Error al comvertir los datos",
+				StatusCode: &statuscode,
+				Message:    "Error al leer el documentos",
+				Detalle:    err,
+			}
+		}
+
 	}
 
 	database.Desconectar()

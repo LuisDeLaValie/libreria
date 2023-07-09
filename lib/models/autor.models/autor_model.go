@@ -13,10 +13,10 @@ import (
 )
 
 type AutorModel struct {
-	Id          primitive.ObjectID `json:"id,omitempty" bson:"_id,omitempty",`
-	Nombre      string             `json:"nombre,omitempty" bson:"nombre,omitempty",`
-	Creado      time.Time          `json:"creado,omitempty" bson:"creado,omitempty",`
-	Actualizado time.Time          `json:"actualizado,omitempty" bson:"actualizado,omitempty",`
+	Id          primitive.ObjectID `json:"id,omitempty" bson:"_id,omitempty"`
+	Nombre      string             `json:"nombre,omitempty" bson:"nombre,omitempty"`
+	Creado      time.Time          `json:"creado,omitempty" bson:"creado,omitempty"`
+	Actualizado time.Time          `json:"actualizado,omitempty" bson:"actualizado,omitempty"`
 }
 
 const dbCollection = "autores"

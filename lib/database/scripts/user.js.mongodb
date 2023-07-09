@@ -1,0 +1,136 @@
+use('Libreria_test')
+
+db.getCollection('libros').aggregate([
+    {// consulta  de busquedas
+        $match: {
+            _id: {
+                "$oid": "64a3b9bb60740a5a6707e64b"
+            }
+        }
+    },
+    {// siclo que nos ayudara a unir la colecion libros con la colecion autores
+        $lookup: {
+            from: "autores",
+            localField: "autores",
+            foreignField: "_id",
+            as: "autores"
+        }
+    },
+    {
+        $project: {
+            _id: 1,
+            titulo: 1,
+            sinopsis: 1,
+            creado: 1,
+            actualizado: 1,
+            autores: {
+                $cond:
+                {
+                    if: {
+                        $eq: ["$autores", []]
+                    },
+                    then: "$$REMOVE",
+                    else: {
+                        $map: {
+                            input: "$autores",
+                            as: "autor",
+                            in: {
+                                _id: "$$autor._id",
+                                nombre: "$$autor.nombre"
+                            }
+                        }
+                    },
+                },
+            },
+        }
+    }
+
+])
+
+/* como hago esta consulta en mongodb:
+
+Autores:
+{
+    "_id": {
+        "$oid": "64aa30d37d3356b2bca23c65"
+    },
+    "nombre": "Actualizar Autor",
+        "creado": {
+        "$date": "2023-07-09T04:00:19.129Z"
+    },
+    "actualizado": {
+        "$date": "2023-07-09T05:56:49.182Z"
+    }
+}
+
+Libros:
+[
+    {
+        "_id": {
+          "$oid": "64a3b9bb60740a5a6707e64b"
+        },
+        "titulo": "actualizar titulo",
+        "sinopsis": "Este es un libro de prueba para ver el funcionaminto dela api",
+        "creado": {
+          "$date": "2023-07-04T06:18:34.989Z"
+        }
+      },
+      {
+        "_id": {
+          "$oid": "64a5cf610d0195d943d2ee10"
+        },
+        "titulo": "actualizar titulo time.Date(2023, time.July, 9, 5, 58, 51, 596766001, time.Local)",
+        "sinopsis": "Este es un libro de prueba para ver el funcionaminto dela api",
+        "creado": {
+          "$date": "2023-07-05T20:15:29.038Z"
+        },
+        "actualizado": {
+          "$date": "2023-07-09T05:58:51.621Z"
+        },
+        "autores": [
+          {
+            "$oid": "64aa30d37d3356b2bca23c65"
+          }
+        ],
+        "collection": {
+          "$oid": "64aa468edce8053e1323c283"
+        }
+      },
+]
+
+
+
+Result:
+[
+    {
+        "_id": {
+          "$oid": "64a3b9bb60740a5a6707e64b"
+        },
+        "titulo": "actualizar titulo",
+        "sinopsis": "Este es un libro de prueba para ver el funcionaminto dela api",
+        "creado": {
+          "$date": "2023-07-04T06:18:34.989Z"
+        }
+      },
+      {
+        "_id": {
+          "$oid": "64a5cf610d0195d943d2ee10"
+        },
+        "titulo": "actualizar titulo time.Date(2023, time.July, 9, 5, 58, 51, 596766001, time.Local)",
+        "sinopsis": "Este es un libro de prueba para ver el funcionaminto dela api",
+        "creado": {
+          "$date": "2023-07-05T20:15:29.038Z"
+        },
+        "actualizado": {
+          "$date": "2023-07-09T05:58:51.621Z"
+        },
+        "autores": [
+          {
+            "_id": {
+                "$oid": "64aa30d37d3356b2bca23c65"
+            },
+            "nombre": "Actualizar Autor",
+          }
+        ]
+      },
+] */
