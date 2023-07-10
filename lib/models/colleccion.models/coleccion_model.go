@@ -186,6 +186,7 @@ func ActualizarColeccion(oid string, actualizar ColleccionModel) error {
 
 	return nil
 }
+
 func EliminarColeccion(oid string) error {
 	defer func() {
 		database.Desconectar()

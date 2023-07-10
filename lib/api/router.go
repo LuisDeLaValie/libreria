@@ -2,8 +2,8 @@ package api
 
 import (
 	"fmt"
-	"io"
-	"os"
+	// "io"
+	// "os"
 	"time"
 
 	autoreshandlers "github.com/TDTxLE/libreria/api/handlers/autor.handler"
@@ -18,9 +18,9 @@ var r *gin.Engine
 func Start() {
 	r = gin.New()
 
-	iniciarHandlers()
-
 	generarLogs()
+
+	iniciarHandlers()
 
 }
 
@@ -43,10 +43,10 @@ func generarLogs() {
 			params.ErrorMessage,
 		)
 
-		// Logging to a file.
-		ginlog, _ := os.Create("gin.log")
-		defer ginlog.Close()
-		io.MultiWriter(ginlog).Write([]byte(log))
+		// // Logging to a file.
+		// ginlog, _ := os.Create("gin.log")
+		// defer ginlog.Close()
+		// io.MultiWriter(ginlog).Write([]byte(log))
 
 		return log
 	}))
@@ -81,5 +81,7 @@ func iniciarHandlers() {
 		colecciones.POST("/", coleccionhandler.CrearHandler)
 		colecciones.PUT("/:id", coleccionhandler.ActualizarHandler)
 		colecciones.DELETE("/:id", coleccionhandler.EliminarHandler)
+		colecciones.PUT("/agregarlibros/:colid", coleccionhandler.AgregarLiroHandler)
+		colecciones.PUT("/removerlibros/:colid", coleccionhandler.RemoverLirosHandler)
 	}
 }

@@ -1,19 +1,41 @@
-version: '3.8'
-
+version: '3'
 services:
   app:
+    image: libreria_dev
     build:
       context: .
       dockerfile: Dockerfile.dev
-    container_name: my_go_app    
+    container_name: libreria_go_dev
     volumes:
       - ./lib:/app
     ports:
-      - "8080:8080"
+      - "8080:8080" 
+    environment:
+      - DB_USER=rootLibreria
+      - DB_PWD=comemierda
+      - DB_HOST=mongodb
+      - DB_PORT=27017      
+      - DB_DATABASE=Libreria
+    networks:
+      - network-mongodb
 
+  test:
+    image: libreria_test
+    build:
+      context: .
+      dockerfile: Dockerfile.test
+    container_name: libreria_go_test 
+    volumes:
+      - ./lib:/app
+    environment:
+      - DB_USER=rootLibreria
+      - DB_PWD=comemierda
+      - DB_HOST=mongodb
+      - DB_PORT=27017      
+      - DB_DATABASE=Libreria_test
+    networks:
+      - network-mongodb
 
-# Extender la configuración con otros archivos
-x-include:
-  - compose.dev.yml
-  - compose.prod.yml
-  - compose.test.yml
+networks:
+  network-mongodb:
+    external: true

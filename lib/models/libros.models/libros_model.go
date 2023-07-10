@@ -2,6 +2,8 @@ package librosmodels
 
 import (
 	"context"
+	"encoding/json"
+	"log"
 	"time"
 
 	"github.com/TDTxLE/libreria/database"
@@ -295,6 +297,7 @@ func ActualizarLibro(oid string, actualizar LibroModelForm) error {
 
 	return nil
 }
+
 func EliminarLibro(oid string) error {
 	defer func() {
 		database.Desconectar()
@@ -332,4 +335,93 @@ func EliminarLibro(oid string) error {
 	database.Desconectar()
 
 	return nil
+}
+
+func ActualizarVariosLibros(oids []string, actualizar LibroModelForm) error {
+
+	idis := []primitive.ObjectID{}
+	// Crear un ID de tipo ObjectID a partir de una cadena
+
+	for i := 0; i < len(oids); i++ {
+		id, err := utilsmongo.ValidarOID(oids[i])
+		if err != nil {
+			statuscode := utils.GetHTTPStatusCode(err)
+			return models.ResposeError{
+				Status:     "id no valid",
+				StatusCode: &statuscode,
+				Message:    "Error al obtener el id",
+				Detalle:    err,
+			}
+		}
+		idis = append(idis, *id)
+	}
+
+	// Crear una consulta (query) para obtener un documento por ID
+	filter := bson.M{"_id": bson.M{"$in": idis}}
+
+	// Crear una actualización con los cambios deseados
+	actualizar.Actualizado = time.Now()
+	update := bson.M{"$set": actualizar}
+
+	log.Println(filter)
+	log.Println(update)
+
+	log.Fatalf("{\nfilter:%v,,\nupdate:%v}", filter, actualizar.ToJson())
+
+	_, err := database.Collection(dbCollection).
+		UpdateMany(context.TODO(), filter, update)
+	if err != nil {
+		statuscode := utils.GetHTTPStatusCode(err)
+		return models.ResposeError{
+			Status:     "Error al actualizar los documentos",
+			StatusCode: &statuscode,
+			Message:    "no se pudo acutalizar los documentos",
+			Detalle:    err,
+		}
+	}
+
+	return nil
+}
+
+func EliminarVariosLibros(oids []string) error {
+
+	idis := []primitive.ObjectID{}
+	// Crear un ID de tipo ObjectID a partir de una cadena
+
+	for i := 0; i < len(oids); i++ {
+		id, err := utilsmongo.ValidarOID(oids[i])
+		if err != nil {
+			statuscode := utils.GetHTTPStatusCode(err)
+			return models.ResposeError{
+				Status:     "id no valid",
+				StatusCode: &statuscode,
+				Message:    "Error al obtener el id",
+				Detalle:    err,
+			}
+		}
+		idis = append(idis, *id)
+	}
+
+	filter := bson.M{"_id": bson.M{"$in": idis}}
+	_, err := database.Collection(dbCollection).DeleteMany(context.TODO(), filter)
+	if err != nil {
+		statuscode := utils.GetHTTPStatusCode(err)
+		return models.ResposeError{
+			Status:     "Error al Eliniar los documentos",
+			StatusCode: &statuscode,
+			Message:    "no se pudo Eliniar los documentos",
+			Detalle:    err,
+		}
+	}
+
+	return nil
+}
+
+func (a LibroModelForm) ToJson() string {
+	jsonData, err := json.Marshal(a)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	return string(jsonData)
 }
