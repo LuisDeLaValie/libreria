@@ -1,16 +1,15 @@
-package libroshandlers
+package autoreshandlers
 
 import (
-	"log"
 	"time"
 
-	librosmodels "github.com/TDTxLE/libreria/models/libros.models"
+	autormodels "github.com/TDTxLE/libreria/models/autor.models"
 	"github.com/gin-gonic/gin"
 )
 
 func ListarHandler(c *gin.Context) {
 
-	res, err := librosmodels.ListarLibros()
+	res, err := autormodels.ListarAutores()
 	if err != nil {
 		c.JSON(500, err)
 	}
@@ -18,28 +17,27 @@ func ListarHandler(c *gin.Context) {
 }
 func ObetenerHandler(c *gin.Context) {
 	id := c.Param("id")
-	res, err := librosmodels.ObtenerLibro(id)
+	res, err := autormodels.ObtenerAutor(id)
 	if err != nil {
 		c.JSON(500, err)
 	}
-	log.Printf("key:%s\nlibro:%v\n", id, res)
 	c.JSON(200, res)
 }
 func CrearHandler(c *gin.Context) {
-	var crearlibro librosmodels.LibroModelForm
-	if err := c.ShouldBindJSON(&crearlibro); err != nil {
+	var crearautor autormodels.AutorModel
+	if err := c.ShouldBindJSON(&crearautor); err != nil {
 		c.JSON(400, gin.H{"error": err.Error()})
 		return
 	}
 	noww := time.Now()
-	crearlibro.Creado = noww
-	res, err := librosmodels.CrearLibro(crearlibro)
+	crearautor.Creado = &noww
+	res, err := autormodels.CrearAutor(crearautor)
 	if err != nil {
 		c.JSON(500, err)
 		return
 	}
 
-	nuevolibro, err := librosmodels.ObtenerLibro(res.Hex())
+	nuevolibro, err := autormodels.ObtenerAutor(res.Hex())
 	if err != nil {
 		c.JSON(500, err)
 		return
@@ -49,21 +47,21 @@ func CrearHandler(c *gin.Context) {
 func ActualizarHandler(c *gin.Context) {
 
 	id := c.Param("id")
-	var actualizar librosmodels.LibroModelForm
+	var actualizar autormodels.AutorModel
 	if err := c.ShouldBindJSON(&actualizar); err != nil {
 		c.JSON(400, gin.H{"error": err.Error()})
 		return
 	}
 
 	noww := time.Now()
-	actualizar.Actualizado = noww
-	err := librosmodels.ActualizarLibro(id, actualizar)
+	actualizar.Actualizado = &noww
+	err := autormodels.ActualizarAutor(id, actualizar)
 	if err != nil {
 		c.JSON(500, err)
 		return
 	}
 
-	nuevolibro, err := librosmodels.ObtenerLibro(id)
+	nuevolibro, err := autormodels.ObtenerAutor(id)
 	if err != nil {
 		c.JSON(500, err)
 		return
@@ -72,7 +70,7 @@ func ActualizarHandler(c *gin.Context) {
 }
 func EliminarHandler(c *gin.Context) {
 	id := c.Param("id")
-	err := librosmodels.EliminarLibro(id)
+	err := autormodels.EliminarAutor(id)
 	if err != nil {
 		c.JSON(500, err)
 	}

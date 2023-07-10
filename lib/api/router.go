@@ -6,7 +6,9 @@ import (
 	"os"
 	"time"
 
-	libroshandlers "github.com/TDTxLE/libreria/api/handlers"
+	autoreshandlers "github.com/TDTxLE/libreria/api/handlers/autor.handler"
+	coleccionhandler "github.com/TDTxLE/libreria/api/handlers/coleccion.handler"
+	libroshandlers "github.com/TDTxLE/libreria/api/handlers/libro.handler"
 
 	"github.com/gin-gonic/gin"
 )
@@ -61,5 +63,23 @@ func iniciarHandlers() {
 		libros.POST("/", libroshandlers.CrearHandler)
 		libros.PUT("/:id", libroshandlers.ActualizarHandler)
 		libros.DELETE("/:id", libroshandlers.EliminarHandler)
+	}
+
+	autores := r.Group("/api/autores")
+	{
+		autores.GET("/", autoreshandlers.ListarHandler)
+		autores.GET("/:id", autoreshandlers.ObetenerHandler)
+		autores.POST("/", autoreshandlers.CrearHandler)
+		autores.PUT("/:id", autoreshandlers.ActualizarHandler)
+		autores.DELETE("/:id", autoreshandlers.EliminarHandler)
+	}
+
+	colecciones := r.Group("/api/colecciones")
+	{
+		colecciones.GET("/", coleccionhandler.ListarHandler)
+		colecciones.GET("/:id", coleccionhandler.ObetenerHandler)
+		colecciones.POST("/", coleccionhandler.CrearHandler)
+		colecciones.PUT("/:id", coleccionhandler.ActualizarHandler)
+		colecciones.DELETE("/:id", coleccionhandler.EliminarHandler)
 	}
 }
