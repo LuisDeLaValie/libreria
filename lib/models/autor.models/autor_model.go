@@ -15,13 +15,13 @@ import (
 type AutorModel struct {
 	Id          primitive.ObjectID `json:"id,omitempty" bson:"_id,omitempty"`
 	Nombre      string             `json:"nombre,omitempty" bson:"nombre,omitempty"`
-	Creado      time.Time          `json:"creado,omitempty" bson:"creado,omitempty"`
-	Actualizado time.Time          `json:"actualizado,omitempty" bson:"actualizado,omitempty"`
+	Creado      *time.Time         `json:"creado,omitempty" bson:"creado,omitempty"`
+	Actualizado *time.Time         `json:"actualizado,omitempty" bson:"actualizado,omitempty"`
 }
 
 const dbCollection = "autores"
 
-func (lirbo AutorModel) CrearAutor(nuevoLibro AutorModel) (*AutorModel, error) {
+func CrearAutor(nuevoLibro AutorModel) (*primitive.ObjectID, error) {
 
 	defer func() {
 		database.Desconectar()
@@ -43,13 +43,13 @@ func (lirbo AutorModel) CrearAutor(nuevoLibro AutorModel) (*AutorModel, error) {
 		}
 	}
 
-	nuevoLibro.Id = oid.InsertedID.(primitive.ObjectID)
+	id := oid.InsertedID.(primitive.ObjectID)
 
 	database.Desconectar()
-	return &nuevoLibro, nil
+	return &id, nil
 }
 
-func (lirbo AutorModel) ListarAutores() ([]AutorModel, error) {
+func ListarAutores() ([]AutorModel, error) {
 
 	defer func() {
 		database.Desconectar()
@@ -93,7 +93,7 @@ func (lirbo AutorModel) ListarAutores() ([]AutorModel, error) {
 	return autores, nil
 }
 
-func (lirbo AutorModel) ObtenerAutor(oid string) (*AutorModel, error) {
+func ObtenerAutor(oid string) (*AutorModel, error) {
 
 	defer func() {
 		database.Desconectar()
@@ -140,7 +140,7 @@ func (lirbo AutorModel) ObtenerAutor(oid string) (*AutorModel, error) {
 	return &result, nil
 }
 
-func (lirbo AutorModel) ActualizarAutor(oid string, actualizar AutorModel) error {
+func ActualizarAutor(oid string, actualizar AutorModel) error {
 	defer func() {
 		database.Desconectar()
 	}()
@@ -164,7 +164,7 @@ func (lirbo AutorModel) ActualizarAutor(oid string, actualizar AutorModel) error
 
 	// Crear una actualización con los cambios deseados
 	current := time.Now()
-	actualizar.Actualizado = current
+	actualizar.Actualizado = &current
 	update := bson.M{"$set": actualizar}
 
 	// Realizar la actualización del documento
@@ -184,7 +184,7 @@ func (lirbo AutorModel) ActualizarAutor(oid string, actualizar AutorModel) error
 	return nil
 }
 
-func (lirbo AutorModel) EliminarAutor(oid string) error {
+func EliminarAutor(oid string) error {
 	defer func() {
 		database.Desconectar()
 	}()

@@ -10,24 +10,23 @@ import (
 var oid string
 
 func TestCrearAutor(t *testing.T) {
-
+	noww := time.Now()
 	autor := autormodels.AutorModel{
 		Nombre: "Autor de prueba",
-		Creado: time.Now(),
+		Creado: &noww,
 	}
 
-	nuevoAutor, err := autor.CrearAutor(autor)
+	nuevoAutor, err := autormodels.CrearAutor(autor)
 	if err != nil {
 		t.Error(err.Error())
 		t.Fail()
 	}
-	oid = nuevoAutor.Id.Hex()
+	oid = nuevoAutor.Hex()
 }
 
 func TestListarAutores(t *testing.T) {
-	var lirbo autormodels.AutorModel
 
-	_, err := lirbo.ListarAutores()
+	_, err := autormodels.ListarAutores()
 	if err != nil {
 		t.Error(err.Error())
 		t.Fail()
@@ -35,9 +34,8 @@ func TestListarAutores(t *testing.T) {
 }
 
 func TestObtenerAutor(t *testing.T) {
-	var libro autormodels.AutorModel
 	t.Run("libro existente", func(t *testing.T) {
-		_, err := libro.ObtenerAutor("64aa30d37d3356b2bca23c65")
+		_, err := autormodels.ObtenerAutor("64aa30d37d3356b2bca23c65")
 		if err != nil {
 			t.Fatal(err.Error())
 			t.Fail()
@@ -53,7 +51,7 @@ func TestObtenerAutor(t *testing.T) {
 			}
 		}()
 
-		_, err := libro.ObtenerAutor("64a3b9bb60740a5a6707e647")
+		_, err := autormodels.ObtenerAutor("64a3b9bb60740a5a6707e647")
 		if err == nil {
 			t.Fatal("no genero error al escribir un id no exixtemte")
 			t.FailNow()
@@ -68,7 +66,7 @@ func TestObtenerAutor(t *testing.T) {
 			}
 		}()
 
-		_, err := libro.ObtenerAutor("64a3b9bb60740a5a6707")
+		_, err := autormodels.ObtenerAutor("64a3b9bb60740a5a6707")
 		if err == nil {
 			t.Fatal("no genero error al escribir un id no valido")
 			t.FailNow()
@@ -79,12 +77,13 @@ func TestObtenerAutor(t *testing.T) {
 }
 
 func TestActualizarAutor(t *testing.T) {
+	noww := time.Now()
 	autor := autormodels.AutorModel{
 		Nombre:      "Actualizar Autor",
-		Actualizado: time.Now(),
+		Actualizado: &noww,
 	}
 
-	err := autor.ActualizarAutor("64aa30d37d3356b2bca23c65", autor)
+	err := autormodels.ActualizarAutor("64aa30d37d3356b2bca23c65", autor)
 	if err != nil {
 		t.Error(err.Error())
 		t.Fail()
@@ -92,8 +91,7 @@ func TestActualizarAutor(t *testing.T) {
 }
 
 func TestEliminarAutor(t *testing.T) {
-	var autor autormodels.AutorModel
-	err := autor.EliminarAutor(oid)
+	err := autormodels.EliminarAutor(oid)
 	if err != nil {
 		t.Errorf("Error al eliminar libro: %v", err)
 		t.Fail()
