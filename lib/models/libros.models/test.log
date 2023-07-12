@@ -1,0 +1,16 @@
+2023/07/10 05:18:08 TestCrearLibro: Libro creado con exito : ObjectID("64ab949088607592d9d52ff4")
+2023/07/10 05:18:08 TestObtenerLibro > libro existente: libro obtenido: &{ObjectID("64a3b9bb60740a5a6707e64b") 0xc0001bd4b0 0xc0001bd4d0 <nil> <nil> 2023-07-04 06:18:34.989 +0000 UTC <nil>}
+2023/07/10 05:18:08 ActualizarVariosLibros  ::  map[_id:map[$in:[ObjectID("64ab21286849d0fc826cc1f1") ObjectID("64ab220b086c781da8d8b1e9")]]]
+2023/07/10 05:18:08 ActualizarVariosLibros  ::  map[$set:{ObjectID("000000000000000000000000") 0xc00002bdf0 <nil> <nil> <nil> ObjectID("64ab220b086c781da8d8b1e9") 0001-01-01 00:00:00 +0000 UTC 2023-07-10 05:18:08.712038478 +0000 UTC m=+0.259337457}]
+2023/07/10 05:18:08 ActualizarVariosLibros  ::  se intento actualizar
+
+2023/07/10 05:18:08 ActualizarVariosLibros  ::  {filter:map[_id:map[$in:[ObjectID("64ab21286849d0fc826cc1f1") ObjectID("64ab220b086c781da8d8b1e9")]]],
+update:{"id":"000000000000000000000000","titulo":"Actualizacion multople","collection":"64ab220b086c781da8d8b1e9","creado":"0001-01-01T00:00:00Z","actualizado":"2023-07-10T05:18:08.712038478Z"}}
+2023/07/10 05:19:56 ActualizarVariosLibros  ::  {filter:map[_id:map[$in:[ObjectID("64ab4d53cdebe9345f5497f3") ObjectID("64ab3feab11081ea454bf6b6")]]],
+update:{"id":"000000000000000000000000","collection":"64ab5357804f94c5931cf034","creado":"0001-01-01T00:00:00Z","actualizado":"2023-07-10T05:19:56.736982536Z"}}2023/07/10 05:21:50 TestCrearLibro: Libro creado con exito : ObjectID("64ab956e65061c78f1c7f6af")
+2023/07/10 05:21:50 TestObtenerLibro > libro existente: libro obtenido: &{ObjectID("64a3b9bb60740a5a6707e64b") 0xc0001c50e0 0xc0001c5100 <nil> <nil> 2023-07-04 06:18:34.989 +0000 UTC <nil>}
+2023/07/10 05:21:50 ActualizarVariosLibros  ::  map[_id:map[$in:[ObjectID("64ab21286849d0fc826cc1f1") ObjectID("64ab220b086c781da8d8b1e9")]]]
+2023/07/10 05:21:50 ActualizarVariosLibros  ::  map[$set:{ObjectID("000000000000000000000000") <nil> <nil> <nil> <nil> ObjectID("64ab220b086c781da8d8b1e9") 0001-01-01 00:00:00 +0000 UTC 2023-07-10 05:21:50.685048269 +0000 UTC m=+0.262371507}]
+2023/07/10 05:21:50 ActualizarVariosLibros  ::  {filter:map[_id:map[$in:[ObjectID("64ab21286849d0fc826cc1f1") ObjectID("64ab220b086c781da8d8b1e9")]]],
+update:{"id":"000000000000000000000000","collection":"64ab220b086c781da8d8b1e9","creado":"0001-01-01T00:00:00Z","actualizado":"2023-07-10T05:21:50.685048269Z"}}
+2023/07/10 05:21:50 ActualizarVariosLibros  ::  se intento actualizar

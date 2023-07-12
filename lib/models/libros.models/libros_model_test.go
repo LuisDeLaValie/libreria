@@ -148,6 +148,7 @@ func TestEliminarLibro(t *testing.T) {
 
 func TestActualizarVariosLibros(t *testing.T) {
 
+	id, _ := utils.ValidarOID("64ab220b086c781da8d8b1e9")
 	oids := []string{
 		"64ab21286849d0fc826cc1f1",
 		"64ab220b086c781da8d8b1e9",
@@ -155,6 +156,7 @@ func TestActualizarVariosLibros(t *testing.T) {
 	// titulo := "Actualizacion multople"
 	var actu librosmodels.LibroModelForm
 	// actu.Titulo = &titulo
+	actu.Collection = *id
 	err := librosmodels.ActualizarVariosLibros(oids, actu)
 
 	if err != nil {

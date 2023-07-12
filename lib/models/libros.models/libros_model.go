@@ -3,7 +3,6 @@ package librosmodels
 import (
 	"context"
 	"encoding/json"
-	"log"
 	"time"
 
 	"github.com/TDTxLE/libreria/database"
@@ -234,7 +233,6 @@ func ObtenerLibro(oid string) (*LibroModel, error) {
 	var result LibroModel
 	defer cursor.Close(context.Background())
 	for cursor.Next(context.Background()) {
-		// log.Fatal("entro al cursor")
 		// Decodifica el documento en la variable result
 		err := cursor.Decode(&result)
 		if err != nil {
@@ -338,10 +336,9 @@ func EliminarLibro(oid string) error {
 }
 
 func ActualizarVariosLibros(oids []string, actualizar LibroModelForm) error {
-
+	database.Conectar()
 	idis := []primitive.ObjectID{}
 	// Crear un ID de tipo ObjectID a partir de una cadena
-
 	for i := 0; i < len(oids); i++ {
 		id, err := utilsmongo.ValidarOID(oids[i])
 		if err != nil {
@@ -362,14 +359,7 @@ func ActualizarVariosLibros(oids []string, actualizar LibroModelForm) error {
 	// Crear una actualización con los cambios deseados
 	actualizar.Actualizado = time.Now()
 	update := bson.M{"$set": actualizar}
-
-	log.Println(filter)
-	log.Println(update)
-
-	log.Fatalf("{\nfilter:%v,,\nupdate:%v}", filter, actualizar.ToJson())
-
-	_, err := database.Collection(dbCollection).
-		UpdateMany(context.TODO(), filter, update)
+	_, err := database.Collection(dbCollection).UpdateMany(context.TODO(), filter, update)
 	if err != nil {
 		statuscode := utils.GetHTTPStatusCode(err)
 		return models.ResposeError{
@@ -379,12 +369,12 @@ func ActualizarVariosLibros(oids []string, actualizar LibroModelForm) error {
 			Detalle:    err,
 		}
 	}
-
+	database.Desconectar()
 	return nil
 }
 
 func EliminarVariosLibros(oids []string) error {
-
+	database.Conectar()
 	idis := []primitive.ObjectID{}
 	// Crear un ID de tipo ObjectID a partir de una cadena
 
@@ -414,13 +404,13 @@ func EliminarVariosLibros(oids []string) error {
 		}
 	}
 
+	database.Desconectar()
 	return nil
 }
 
 func (a LibroModelForm) ToJson() string {
 	jsonData, err := json.Marshal(a)
 	if err != nil {
-		log.Fatal(err)
 	}
 
 	return string(jsonData)

@@ -1,7 +1,7 @@
 package coleccionhandler
 
 import (
-	"log"
+	"fmt"
 	"time"
 
 	"github.com/TDTxLE/libreria/models"
@@ -93,7 +93,6 @@ func AgregarLiroHandler(c *gin.Context) {
 			c.JSON(500, err)
 		}
 	}() */
-
 	// obtener el parametro colid
 	coleid := c.Param("colid")
 	id, err := utilsmongo.ValidarOID(coleid)
@@ -116,7 +115,6 @@ func AgregarLiroHandler(c *gin.Context) {
 	// actualizr los libros
 	var lActualizar librosmodels.LibroModelForm
 	lActualizar.Collection = *id
-	log.Printf("ids:%v\nactualizar:%s", idsLibros, lActualizar.ToJson())
 	if err := librosmodels.ActualizarVariosLibros(idsLibros, lActualizar); err != nil {
 		c.JSON(400, gin.H{"error": err.Error()})
 		return
@@ -126,18 +124,8 @@ func AgregarLiroHandler(c *gin.Context) {
 }
 
 func RemoverLirosHandler(c *gin.Context) {
-
-	// obtener el parametro colid
+	// obtener oid coleecion
 	coleid := c.Param("colid")
-	id, err := utilsmongo.ValidarOID(coleid)
-	if err != nil {
-		c.JSON(500, models.ResposeError{
-			Status:  "id no valid",
-			Message: "Error al obtener el id",
-			Detalle: err,
-		})
-		return
-	}
 
 	// obtener la lista de los libros agregar a la coleccion
 	var idsLibros []string
@@ -146,13 +134,11 @@ func RemoverLirosHandler(c *gin.Context) {
 		return
 	}
 
-	// actualizr los libros
-	var lActualizar librosmodels.LibroModelForm
-	lActualizar.Collection = *id
-	if err := librosmodels.EliminarVariosLibros(idsLibros); err != nil {
-		c.JSON(400, gin.H{"error": err.Error()})
-		return
+	conunt, err := collecionmodels.RemoverLibros(coleid, idsLibros)
+	if err != nil {
+		c.JSON(500, err)
 	}
 
-	c.String(200, "se agregaron los libros")
+	res := fmt.Sprintf("se removieron %d libros", conunt)
+	c.String(200, res)
 }

@@ -225,3 +225,57 @@ func EliminarColeccion(oid string) error {
 
 	return nil
 }
+
+func RemoverLibros(oid string, libros []string) (*int64, error) {
+
+	id, err := utilsmongo.ValidarOID(oid)
+	if err != nil {
+		return nil, models.ResposeError{
+			Status:  "id no valid",
+			Message: "Error al obtener el id",
+			Detalle: err,
+		}
+	}
+
+	// Crear un ID de tipo ObjectID a partir de una cadena
+	idis := []primitive.ObjectID{}
+	for i := 0; i < len(libros); i++ {
+		id, err := utilsmongo.ValidarOID(libros[i])
+		if err != nil {
+			statuscode := utils.GetHTTPStatusCode(err)
+			return nil, models.ResposeError{
+				Status:     "id no valid",
+				StatusCode: &statuscode,
+				Message:    "Error al obtener el id",
+				Detalle:    err,
+			}
+		}
+		idis = append(idis, *id)
+	}
+
+	database.Conectar()
+	// Construir el filtro para seleccionar el documento por su ID
+	filter := bson.M{"_id": bson.M{"$in": idis}}
+
+	// Construir la actualización para quitar el campo "email"
+	update := bson.M{"$unset": bson.M{"collection": id}}
+	// update := bson.M{"$unset": bson.M{"collection": ""}}
+
+	result, err := database.Collection("libros").UpdateMany(context.TODO(), filter, update)
+	if err != nil {
+		// c.JSON(400, gin.H{"error": err.Error()})
+		// return
+		statuscode := utils.GetHTTPStatusCode(err)
+		return nil, models.ResposeError{
+			Status:     "id no valid",
+			StatusCode: &statuscode,
+			Message:    "Error al obtener el id",
+			Detalle:    err,
+		}
+	}
+
+	database.Desconectar()
+
+	return &result.ModifiedCount, nil
+
+}
