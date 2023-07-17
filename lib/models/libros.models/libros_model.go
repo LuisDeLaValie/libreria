@@ -69,7 +69,7 @@ func CrearLibro(nuevoLibro LibroModelForm) (*primitive.ObjectID, error) {
 	return &id, nil
 }
 
-func ListarLibros(filtro ...bson.M) ([]LibroModel, error) {
+func ListarLibros(filtro *bson.M) ([]LibroModel, error) {
 
 	defer func() {
 		database.Desconectar()
@@ -115,13 +115,12 @@ func ListarLibros(filtro ...bson.M) ([]LibroModel, error) {
 			},
 		},
 	}
-	log.Printf("valor de filtro %v", filtro)
 	if filtro != nil {
-		// consulta  de busquedas
-		auxfiltro := bson.A{bson.M{"$match": filtro}}
+		// asds :=*filtro
+		auxfiltro := bson.A{bson.M{"$match": *filtro}}
 		consulta = append(auxfiltro, consulta...)
 	}
-
+	log.Printf("consulta = %v", consulta)
 	colecion := database.Collection(dbCollection)
 	cursor, err := colecion.Aggregate(context.Background(), consulta)
 	if err != nil {
@@ -169,7 +168,7 @@ func ObtenerLibro(oid string) (*LibroModel, error) {
 	database.Conectar()
 
 	// Crear un ID de tipo ObjectID a partir de una cadena
-	id, err := utilsmongo.ValidarOID(oid)
+	id, err := utilsmongo.ParseOID(oid)
 	if err != nil {
 		statuscode := utils.GetHTTPStatusCode(err)
 		return nil, models.ResposeError{
@@ -269,7 +268,7 @@ func ActualizarLibro(oid string, actualizar LibroModelForm) error {
 	database.Conectar()
 
 	// Crear un ID de tipo ObjectID a partir de una cadena
-	id, err := utilsmongo.ValidarOID(oid)
+	id, err := utilsmongo.ParseOID(oid)
 	if err != nil {
 		statuscode := utils.GetHTTPStatusCode(err)
 		return models.ResposeError{
@@ -312,7 +311,7 @@ func EliminarLibro(oid string) error {
 	database.Conectar()
 
 	// Crear un ID de tipo ObjectID a partir de una cadena
-	id, err := utilsmongo.ValidarOID(oid)
+	id, err := utilsmongo.ParseOID(oid)
 	if err != nil {
 		statuscode := utils.GetHTTPStatusCode(err)
 		return models.ResposeError{
@@ -399,7 +398,7 @@ func ActualizarVariosLibros(oids []string, actualizar LibroModelForm) error {
 	idis := []primitive.ObjectID{}
 	// Crear un ID de tipo ObjectID a partir de una cadena
 	for i := 0; i < len(oids); i++ {
-		id, err := utilsmongo.ValidarOID(oids[i])
+		id, err := utilsmongo.ParseOID(oids[i])
 		if err != nil {
 			statuscode := utils.GetHTTPStatusCode(err)
 			return models.ResposeError{
@@ -438,7 +437,7 @@ func EliminarVariosLibros(oids []string) error {
 	// Crear un ID de tipo ObjectID a partir de una cadena
 
 	for i := 0; i < len(oids); i++ {
-		id, err := utilsmongo.ValidarOID(oids[i])
+		id, err := utilsmongo.ParseOID(oids[i])
 		if err != nil {
 			statuscode := utils.GetHTTPStatusCode(err)
 			return models.ResposeError{
@@ -468,9 +467,6 @@ func EliminarVariosLibros(oids []string) error {
 }
 
 func (a LibroModelForm) ToJson() string {
-	jsonData, err := json.Marshal(a)
-	if err != nil {
-	}
-
+	jsonData, _ := json.Marshal(a)
 	return string(jsonData)
 }

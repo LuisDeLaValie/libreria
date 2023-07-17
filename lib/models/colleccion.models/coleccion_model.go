@@ -106,7 +106,7 @@ func ObtenerColeccion(oid string) (*ColleccionModel, error) {
 	database.Conectar()
 
 	// Crear un ID de tipo ObjectID a partir de una cadena
-	id, err := utilsmongo.ValidarOID(oid)
+	id, err := utilsmongo.ParseOID(oid)
 	if err != nil {
 		statuscode := utils.GetHTTPStatusCode(err)
 		return nil, models.ResposeError{
@@ -152,7 +152,7 @@ func ActualizarColeccion(oid string, actualizar ColleccionModel) error {
 	database.Conectar()
 
 	// Crear un ID de tipo ObjectID a partir de una cadena
-	id, err := utilsmongo.ValidarOID(oid)
+	id, err := utilsmongo.ParseOID(oid)
 	if err != nil {
 		statuscode := utils.GetHTTPStatusCode(err)
 		return models.ResposeError{
@@ -195,7 +195,7 @@ func EliminarColeccion(oid string) error {
 	database.Conectar()
 
 	// Crear un ID de tipo ObjectID a partir de una cadena
-	id, err := utilsmongo.ValidarOID(oid)
+	id, err := utilsmongo.ParseOID(oid)
 	if err != nil {
 		statuscode := utils.GetHTTPStatusCode(err)
 		return models.ResposeError{
@@ -228,7 +228,7 @@ func EliminarColeccion(oid string) error {
 
 func RemoverLibros(oid string, libros []string) (*int64, error) {
 
-	id, err := utilsmongo.ValidarOID(oid)
+	id, err := utilsmongo.ParseOID(oid)
 	if err != nil {
 		return nil, models.ResposeError{
 			Status:  "id no valid",
@@ -240,7 +240,7 @@ func RemoverLibros(oid string, libros []string) (*int64, error) {
 	// Crear un ID de tipo ObjectID a partir de una cadena
 	idis := []primitive.ObjectID{}
 	for i := 0; i < len(libros); i++ {
-		id, err := utilsmongo.ValidarOID(libros[i])
+		id, err := utilsmongo.ParseOID(libros[i])
 		if err != nil {
 			statuscode := utils.GetHTTPStatusCode(err)
 			return nil, models.ResposeError{

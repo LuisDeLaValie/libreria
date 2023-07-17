@@ -102,7 +102,7 @@ func ObtenerAutor(oid string) (*AutorModel, error) {
 	database.Conectar()
 
 	// Crear un ID de tipo ObjectID a partir de una cadena
-	id, err := utilsmongo.ValidarOID(oid)
+	id, err := utilsmongo.ParseOID(oid)
 	if err != nil {
 		statuscode := utils.GetHTTPStatusCode(err)
 		return nil, models.ResposeError{
@@ -148,7 +148,7 @@ func ActualizarAutor(oid string, actualizar AutorModel) error {
 	database.Conectar()
 
 	// Crear un ID de tipo ObjectID a partir de una cadena
-	id, err := utilsmongo.ValidarOID(oid)
+	id, err := utilsmongo.ParseOID(oid)
 	if err != nil {
 		statuscode := utils.GetHTTPStatusCode(err)
 		return models.ResposeError{
@@ -192,7 +192,7 @@ func EliminarAutor(oid string) error {
 	database.Conectar()
 
 	// Crear un ID de tipo ObjectID a partir de una cadena
-	id, err := utilsmongo.ValidarOID(oid)
+	id, err := utilsmongo.ParseOID(oid)
 	if err != nil {
 		statuscode := utils.GetHTTPStatusCode(err)
 		return models.ResposeError{

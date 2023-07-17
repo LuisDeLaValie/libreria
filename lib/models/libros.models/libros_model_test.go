@@ -53,7 +53,7 @@ func TestCrearLibro(t *testing.T) {
 
 func TestListarLibros(t *testing.T) {
 
-	_, err := librosmodels.ListarLibros()
+	_, err := librosmodels.ListarLibros(nil)
 
 	if err != nil {
 		log.Fatalf("TestListarLibros: Error al obtener los libros: %v", err)
@@ -113,9 +113,9 @@ func TestObtenerLibro(t *testing.T) {
 
 func TestActualizarLibro(t *testing.T) {
 
-	oidc, _ := utils.ValidarOID("64aa468edce8053e1323c283")
+	oidc, _ := utils.ParseOID("64aa468edce8053e1323c283")
 	coleccion := oidc
-	oid, _ := utils.ValidarOID("64aa30d37d3356b2bca23c65")
+	oid, _ := utils.ParseOID("64aa30d37d3356b2bca23c65")
 	autores := []primitive.ObjectID{*oid}
 	clock := time.Now()
 	auxTitulo := "actualizar titulo " + clock.Local().GoString()
@@ -154,9 +154,9 @@ func TestCrearvariosLibros(t *testing.T) {
 	sipnosis := "Este es un libro de prueba para ver el funcionaminto dela api"
 
 	libros := []librosmodels.LibroModelForm{
-		librosmodels.LibroModelForm{Titulo: &titulo, Sinopsis: &sipnosis},
-		librosmodels.LibroModelForm{Titulo: &titulo, Sinopsis: &sipnosis},
-		librosmodels.LibroModelForm{Titulo: &titulo, Sinopsis: &sipnosis},
+		{Titulo: &titulo, Sinopsis: &sipnosis},
+		{Titulo: &titulo, Sinopsis: &sipnosis},
+		{Titulo: &titulo, Sinopsis: &sipnosis},
 	}
 	res, err := librosmodels.CrearvariosLibros(libros)
 	if err != nil {
@@ -181,7 +181,7 @@ func TestCrearvariosLibros(t *testing.T) {
 
 func TestActualizarVariosLibros(t *testing.T) {
 
-	id, _ := utils.ValidarOID("64ab220b086c781da8d8b1e9")
+	id, _ := utils.ParseOID("64ab220b086c781da8d8b1e9")
 
 	var actu librosmodels.LibroModelForm
 	actu.Collection = *id

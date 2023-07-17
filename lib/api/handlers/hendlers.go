@@ -11,7 +11,7 @@ func AgregarLibroColeccionHandler(c *gin.Context) {
 
 	// obtener el parametro colid
 	coleid := c.Param("colid")
-	id, err := utilsmongo.ValidarOID(coleid)
+	id, err := utilsmongo.ParseOID(coleid)
 	if err != nil {
 		c.JSON(500, models.ResposeError{
 			Status:  "id no valid",
