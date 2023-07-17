@@ -3,7 +3,6 @@ package librosmodels
 import (
 	"context"
 	"encoding/json"
-	"log"
 	"time"
 
 	"github.com/TDTxLE/libreria/database"
@@ -116,11 +115,9 @@ func ListarLibros(filtro *bson.M) ([]LibroModel, error) {
 		},
 	}
 	if filtro != nil {
-		// asds :=*filtro
 		auxfiltro := bson.A{bson.M{"$match": *filtro}}
 		consulta = append(auxfiltro, consulta...)
 	}
-	log.Printf("consulta = %v", consulta)
 	colecion := database.Collection(dbCollection)
 	cursor, err := colecion.Aggregate(context.Background(), consulta)
 	if err != nil {
