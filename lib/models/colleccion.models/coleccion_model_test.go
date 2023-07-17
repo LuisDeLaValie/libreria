@@ -48,7 +48,6 @@ func TestCrearColeccion(t *testing.T) {
 	oid = nuevoColeccion.Hex()
 
 }
-
 func TestListarColecciones(t *testing.T) {
 
 	_, err := collecionmodels.ListarColecciones()
@@ -58,7 +57,6 @@ func TestListarColecciones(t *testing.T) {
 		t.Fail()
 	}
 }
-
 func TestObtenerColeccion(t *testing.T) {
 	t.Run("coleccion existente", func(t *testing.T) {
 		_, err := collecionmodels.ObtenerColeccion("64aa468edce8053e1323c283")
@@ -106,7 +104,6 @@ func TestObtenerColeccion(t *testing.T) {
 
 	})
 }
-
 func TestActualizarColeccion(t *testing.T) {
 	clock := time.Now()
 	auxTitulo := "actualizar titulo " + clock.Local().GoString()
@@ -122,7 +119,6 @@ func TestActualizarColeccion(t *testing.T) {
 		t.Fail()
 	}
 }
-
 func TestEliminarColeccion(t *testing.T) {
 	err := collecionmodels.EliminarColeccion(oid)
 	if err != nil {

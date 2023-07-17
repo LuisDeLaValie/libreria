@@ -146,21 +146,58 @@ func TestEliminarLibro(t *testing.T) {
 	}
 }
 
+/// acciones de multiples documentos docuemntos
+var oids []string
+
+func TestCrearvariosLibros(t *testing.T) {
+	titulo := "Multiples libros de prueba"
+	sipnosis := "Este es un libro de prueba para ver el funcionaminto dela api"
+
+	libros := []librosmodels.LibroModelForm{
+		librosmodels.LibroModelForm{Titulo: &titulo, Sinopsis: &sipnosis},
+		librosmodels.LibroModelForm{Titulo: &titulo, Sinopsis: &sipnosis},
+		librosmodels.LibroModelForm{Titulo: &titulo, Sinopsis: &sipnosis},
+	}
+	res, err := librosmodels.CrearvariosLibros(libros)
+	if err != nil {
+		log.Fatalf("TestCrearvariosLibros: %v", err)
+		t.Error(err)
+		t.Fail()
+	}
+
+	if len(*res) == 0 {
+		log.Fatal("TestCrearvariosLibros: no se crearon los documentos")
+		t.Error(err)
+		t.Fail()
+	}
+
+	stringIDs := make([]string, len(*res))
+	for i, id := range *res {
+		stringIDs[i] = id.Hex()
+	}
+	oids = stringIDs
+	log.Printf("TestCrearvariosLibros: %v", res)
+}
+
 func TestActualizarVariosLibros(t *testing.T) {
 
 	id, _ := utils.ValidarOID("64ab220b086c781da8d8b1e9")
-	oids := []string{
-		"64ab21286849d0fc826cc1f1",
-		"64ab220b086c781da8d8b1e9",
-	}
-	// titulo := "Actualizacion multople"
+
 	var actu librosmodels.LibroModelForm
-	// actu.Titulo = &titulo
 	actu.Collection = *id
 	err := librosmodels.ActualizarVariosLibros(oids, actu)
 
 	if err != nil {
 		log.Fatalf("TestEliminarLibro: %v", err)
+		t.Error(err)
+		t.Fail()
+	}
+}
+
+func TestEliminarVariosLibros(t *testing.T) {
+	err := librosmodels.EliminarVariosLibros(oids)
+	if err != nil {
+		log.Fatalf("TestEliminarVariosLibros: %v", err)
 		t.Error(err)
 		t.Fail()
 	}

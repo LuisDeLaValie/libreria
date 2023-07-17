@@ -3,6 +3,7 @@ package librosmodels
 import (
 	"context"
 	"encoding/json"
+	"log"
 	"time"
 
 	"github.com/TDTxLE/libreria/database"
@@ -68,7 +69,7 @@ func CrearLibro(nuevoLibro LibroModelForm) (*primitive.ObjectID, error) {
 	return &id, nil
 }
 
-func ListarLibros() ([]LibroModel, error) {
+func ListarLibros(filtro ...bson.M) ([]LibroModel, error) {
 
 	defer func() {
 		database.Desconectar()
@@ -114,6 +115,13 @@ func ListarLibros() ([]LibroModel, error) {
 			},
 		},
 	}
+	log.Printf("valor de filtro %v", filtro)
+	if filtro != nil {
+		// consulta  de busquedas
+		auxfiltro := bson.A{bson.M{"$match": filtro}}
+		consulta = append(auxfiltro, consulta...)
+	}
+
 	colecion := database.Collection(dbCollection)
 	cursor, err := colecion.Aggregate(context.Background(), consulta)
 	if err != nil {
@@ -333,6 +341,57 @@ func EliminarLibro(oid string) error {
 	database.Desconectar()
 
 	return nil
+}
+
+/// acciones de multiples documentos docuemntos
+
+func CrearvariosLibros(nuevoLibro []LibroModelForm) (*[]primitive.ObjectID, error) {
+
+	defer func() {
+		database.Desconectar()
+	}()
+
+	database.Conectar()
+
+	// Convertir el slice a []interface{}
+	var librosInterface []interface{}
+	for _, libro := range nuevoLibro {
+		librosInterface = append(librosInterface, libro)
+	}
+
+	// Insertar el documento en la colección
+	results, err := database.Collection(dbCollection).InsertMany(context.TODO(), librosInterface)
+	if err != nil {
+		// Manejar el error de inserción
+		database.Desconectar()
+		statuscode := utils.GetHTTPStatusCode(err)
+		return nil, models.ResposeError{
+			Status:     "No se crearon los libros ",
+			StatusCode: &statuscode,
+			Message:    "Error al crear documento",
+			Detalle:    err,
+		}
+	}
+
+	database.Desconectar()
+
+	// Convertir los IDs a []primitive.ObjectID
+	insertedIDs := make([]primitive.ObjectID, len(results.InsertedIDs))
+	for i, id := range results.InsertedIDs {
+		if oid, ok := id.(primitive.ObjectID); ok {
+			insertedIDs[i] = oid
+		} else {
+			statuscode := utils.GetHTTPStatusCode(err)
+			return nil, models.ResposeError{
+				Status:     "No se crearon los libros ",
+				StatusCode: &statuscode,
+				Message:    "Error al crear documento",
+				Detalle:    err,
+			}
+		}
+	}
+
+	return &insertedIDs, nil
 }
 
 func ActualizarVariosLibros(oids []string, actualizar LibroModelForm) error {
