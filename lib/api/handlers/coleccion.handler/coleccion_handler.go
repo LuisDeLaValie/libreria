@@ -9,6 +9,7 @@ import (
 	librosmodels "github.com/TDTxLE/libreria/models/libros.models"
 	utilsmongo "github.com/TDTxLE/libreria/utils/mongoTogolang"
 	"github.com/gin-gonic/gin"
+	"go.mongodb.org/mongo-driver/bson"
 )
 
 func ListarHandler(c *gin.Context) {
@@ -94,6 +95,7 @@ func AgregarLiroHandler(c *gin.Context) {
 		}
 	}() */
 	// obtener el parametro colid
+
 	coleid := c.Param("colid")
 	id, err := utilsmongo.ParseOID(coleid)
 	if err != nil {
@@ -120,7 +122,10 @@ func AgregarLiroHandler(c *gin.Context) {
 		return
 	}
 
-	c.String(200, "se agregaron los libros")
+	oids, _ := utilsmongo.ParseManyOID(idsLibros)
+	filtro := bson.M{"_id": bson.M{"$in": oids}}
+	res, _ := librosmodels.ListarLibros(&filtro)
+	c.JSON(200, res)
 }
 
 func RemoverLirosHandler(c *gin.Context) {
