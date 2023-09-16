@@ -63,6 +63,7 @@ func iniciarHandlers() {
 		libros.POST("/", libroshandlers.CrearHandler)
 		libros.PUT("/:id", libroshandlers.ActualizarHandler)
 		libros.DELETE("/:id", libroshandlers.EliminarHandler)
+		libros.POST("/crearvarios", libroshandlers.CrearVariosHandler)
 	}
 
 	autores := r.Group("/api/autores")

@@ -19,7 +19,11 @@ func ListarHandler(c *gin.Context) {
 	if err != nil {
 		c.JSON(500, err)
 	}
-	c.JSON(200, res)
+	response := map[string]interface{}{
+		"count":  len(res),
+		"libros": res,
+	}
+	c.JSON(200, response)
 }
 func ObetenerHandler(c *gin.Context) {
 	id := c.Param("id")
@@ -95,11 +99,16 @@ func CrearVariosHandler(c *gin.Context) {
 		return
 	}
 
-	respnse, err := librosmodels.ListarLibros(&bson.M{"_id": res})
+	respnse, err := librosmodels.ListarLibros(&bson.M{"_id": bson.M{"$in": res}})
 	if err != nil {
 		c.JSON(500, err)
 		return
 	}
-	c.JSON(500, respnse)
+
+	response2 := map[string]interface{}{
+		"count":  len(respnse),
+		"libros": respnse,
+	}
+	c.JSON(200, response2)
 
 }

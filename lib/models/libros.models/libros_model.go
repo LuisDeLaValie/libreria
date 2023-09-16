@@ -93,6 +93,7 @@ func ListarLibros(filtro *bson.M) ([]LibroModel, error) {
 				"sinopsis":    1,
 				"creado":      1,
 				"actualizado": 1,
+				"origen":      1,
 				"autores": bson.M{
 					"$cond": bson.M{
 						"if": bson.M{
